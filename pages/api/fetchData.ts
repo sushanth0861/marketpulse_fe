@@ -45,14 +45,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const analyzedCollection = db.collection('analyzed_news_data');
     
     const analysisData = await analyzedCollection.find({}).toArray();
-    
-    // Reformat the date field for each record to 'YYYY-MM-DD'
-    const formattedAnalysisData = analysisData.map(record => ({
-      ...record,
-      date: formatDate(record.date),
-    })).filter(record => record.date === today);
+    console.log(analysisData)
 
-    res.status(200).json({ summary: summaryData, analysis: formattedAnalysisData });
+    res.status(200).json({ summary: summaryData, analysis: analysisData });
   } catch (error) {
     console.error("Error fetching data from MongoDB:", error);
     res.status(500).json({ error: "Failed to fetch data" });
