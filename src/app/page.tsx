@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArrowDownIcon, ArrowUpIcon, DollarSign, Info } from 'lucide-react';
 import MarketMoodGauge from './components/MarketMoodGauge';
 import AutoScrollingArticles from './components/AutoScrollingArticles';
-import InfoModal from './components/InfoModal'; // Modal component
+import InfoModal from './components/InfoModal';
 
 // Define interfaces for data types
 interface SentimentCounts {
@@ -28,6 +28,13 @@ interface ArticleData {
   sentiment_label: string;
 }
 
+// Define interface for sector data to remove `any` usage
+interface SectorData {
+  name: string;
+  value: number | string;
+  change: number | string;
+}
+
 // Define sector tickers
 const sectorTickers = {
   Technology: 'XLK',
@@ -39,10 +46,10 @@ const sectorTickers = {
 };
 
 export default function Home() {
-  const [sectorData, setSectorData] = useState<any[]>([]);
+  const [sectorData, setSectorData] = useState<SectorData[]>([]);
   const [articleData, setArticleData] = useState<ArticleData[]>([]);
   const [latestSentiment, setLatestSentiment] = useState<SentimentSummary | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // For modal control
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch sector data
   useEffect(() => {
@@ -94,19 +101,10 @@ export default function Home() {
     article.sentiment_label,
   ]);
 
-  // Modal content explaining each section
-  const infoContent = `
-    - **Market Sector Data**: Data is fetched from Alpha Vantage and represents major market sectors.
-    - **ML Techniques**: We use NLP models like BART for summarization and sentiment analysis.
-    - **Market Mood Gauge**: Generated using a sentiment score on a range from Bearish to Bullish.
-    - **Analyzed Articles**: Articles analyzed for sentiment and summarized based on recent trends.
-  `;
-
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">US Market Sectors</h3>
-        {/* Info button to open modal */}
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 hover:bg-blue-700 p-2 rounded-full text-white"
@@ -115,15 +113,18 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Sector Data Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sectorData.map((sector, index) => (
           <div key={index} className="bg-gray-800 p-4 rounded-lg">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm sm:text-base">{sector.name}</span>
-              <span className={`text-sm ${sector.change >= 0 ? "text-green-500" : "text-red-500"}`}>
-                {sector.change >= 0 ? <ArrowUpIcon className="inline w-3 h-3" /> : <ArrowDownIcon className="inline w-3 h-3" />}
-                {Math.abs(sector.change).toFixed(2)}%
+              <span className={`text-sm ${typeof sector.change === "number" && sector.change >= 0 ? "text-green-500" : "text-red-500"}`}>
+                {typeof sector.change === "number" && sector.change >= 0 ? (
+                  <ArrowUpIcon className="inline w-3 h-3" />
+                ) : (
+                  <ArrowDownIcon className="inline w-3 h-3" />
+                )}
+                {Math.abs(Number(sector.change)).toFixed(2)}%
               </span>
             </div>
             <div className="text-lg sm:text-xl font-bold flex items-center">
@@ -134,7 +135,6 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Market Mood Gauge */}
       {latestSentiment ? (
         <div className="mt-6">
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg">
@@ -150,12 +150,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Articles Section */}
       <div className="flex-grow max-h-64 overflow-hidden mt-4">
         <AutoScrollingArticles articles={formattedArticles} />
       </div>
 
-      {/* Info Modal */}
       <InfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

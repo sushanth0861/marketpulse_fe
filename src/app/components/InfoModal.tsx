@@ -3,7 +3,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./dialog"
 import { ScrollArea } from "./scroll-area"
 import { Button } from "./button"
-import { X } from "lucide-react"
 
 interface InfoModalProps {
   isOpen: boolean

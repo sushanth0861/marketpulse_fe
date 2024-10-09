@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { RadialBar, RadialBarChart, PolarAngleAxis } from "recharts";
 import { Card, CardContent } from "@/app/components/card";
-import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon } from "lucide-react";
 
 interface MarketMoodGaugeProps {
   value: number; // Value should be between -1 and 1
@@ -15,20 +14,6 @@ const getGaugeColor = (value: number) => {
   if (value > -0.15 && value < 0.15) return "#FFD700"; // Yellow for Neutral
   if (value >= 0.15 && value < 0.35) return "#ADFF2F"; // Light Green for Somewhat Bullish
   return "#008000"; // Green for Bullish
-};
-
-const getMoodLabel = (value: number) => {
-  if (value <= -0.35) return "Bearish";
-  if (value > -0.35 && value <= -0.15) return "Somewhat Bearish";
-  if (value > -0.15 && value < 0.15) return "Neutral";
-  if (value >= 0.15 && value < 0.35) return "Somewhat Bullish";
-  return "Bullish";
-};
-
-const getMoodIcon = (value: number) => {
-  if (value <= -0.15) return <ArrowDownIcon className="h-4 w-4" />;
-  if (value >= 0.15) return <ArrowUpIcon className="h-4 w-4" />;
-  return <ArrowRightIcon className="h-4 w-4" />;
 };
 
 export default function MarketMoodGauge({ value }: MarketMoodGaugeProps) {
