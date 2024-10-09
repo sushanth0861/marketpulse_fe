@@ -41,11 +41,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Fetch today's analysis and format dates
-    const today = new Date().toISOString().split('T')[0];
     const analyzedCollection = db.collection('analyzed_news_data');
     
     const analysisData = await analyzedCollection.find({}).toArray();
-    console.log(analysisData)
 
     res.status(200).json({ summary: summaryData, analysis: analysisData });
   } catch (error) {
